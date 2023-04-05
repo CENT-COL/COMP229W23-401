@@ -64,6 +64,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../client')));
 
 app.use(cors()); //used with Angular.
 
@@ -108,12 +109,18 @@ let strategy = new JWTSTrategy(jwtOption, (jwt_payload, done) => {
 passport.use(strategy);
 
 // Use Routes
-app.use('/',indexRouter);
-app.use('/', moviesRouter);
-app.use('/', authRouter);
+// app.use('/',indexRouter);
+// app.use('/', moviesRouter);
+// app.use('/', authRouter);
 
 // Enable API Routes
 app.use('/api/auth', authApiRouter);
 app.use('/api/movies', passport.authenticate('jwt', {session: false}),  moviesApiRouter);
+
+// Use Angular Routes
+app.use('/*', (req, res) => {
+    res.sendfile(path.join(__dirname, '../client/index.html'));
+} )
+
 
 export default app;
